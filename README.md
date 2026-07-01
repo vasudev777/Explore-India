@@ -1,84 +1,59 @@
-# 🇮🇳 Explore India – Premium Travel Planner & Admin Directory
+# 🇮🇳 Explore India – Live Travel Planner & Platform Directory
 
-Explore India is a full-featured, database-driven travel planning web application. It allows travelers to book predefined packages, build custom multi-hotel itineraries, hire verified local guides, and book flights, trains, and cabs. The project includes a sleek, responsive administrative dashboard for platform-wide auditing, revenue tracking, and guide verifications.
+Explore India is a production-ready, database-driven travel planning web application deployed live on the cloud. The platform enables travelers to customize multi-hotel itineraries, book predefined packages, hire verified local guides, and manage transportation bookings. It features a robust administration console and a secure portal for local guides, all integrated with automated SMTP mailers and secure checkout processors.
 
 ---
 
-## 🚀 Key Features
+## 🌐 Live Platform Architecture
+
+The platform is optimized for production hosting environments (e.g., InfinityFree Cloud Hosting) and implements a series of enterprise-grade security and configuration patterns:
+
+* **Auto-Detect Environment Engine**: Seamlessly transitions database connection strings between development sandboxes and live production servers without manual file updates.
+* **Production Security Shields (.htaccess)**: Blocks open directory browsing across assets (`/css/`, `/images/`, `/uploads/`) and restricts direct URL access to configuration files (`db.php`).
+* **Bcrypt Password Migration**: Dynamically validates BCrypt and legacy MD5 passwords on the Admin Gateway, automatically upgrading hashes to Bcrypt on successful authentication.
+* **Secure Database Access**: All live queries are hardened using prepared statements and advanced sanitization filters to block SQL Injection (SQLi) attempts.
+
+---
+
+## 🚀 Key Functional Modules
 
 ### 1. Traveler Console (Client Side)
-* **Custom Itinerary Planner**: Select a state, view available hotels grouped by cities, specify trip duration, and dynamically construct a custom itinerary.
-* **Special Tour Packages**: View pre-planned curated packages featuring custom hotel integrations and pricing.
-* **Unified Transport Hub**: Real-time mock booking interface for flights, trains, and cabs from city to city.
-* **Local Guide Directory**: Browse registered guides, filtered by operating state and languages spoken.
-* **Responsive 5-Image Sliders**: State package pages feature beautiful, fluid, mobile-responsive 5-image animation loops (Uttarakhand, Kerala, Tamil Nadu, Gujarat, Rajasthan, Madhya Pradesh, J&K, Sikkim, and West Bengal) optimized for mobile aspect ratios and touch devices.
+* **Custom Itinerary Planner**: Choose a state, select hotels from multiple cities, specify trip duration, and dynamically compile custom travel itineraries.
+* **Special Tour Packages**: Browse curated holiday packages with pre-integrated hotel bookings and pricing.
+* **Responsive 5-Image Sliders**: Fluid, responsive animation sliders across J&K, Uttarakhand, Kerala, Tamil Nadu, Gujarat, Rajasthan, Madhya Pradesh, Sikkim, and West Bengal package pages.
+* **Unified Transport Hub**: Interactive mock interface for booking flights, trains, and cabs.
 
 ### 2. Local Guide Portal
-* **Verified Registration**: Standard registration with email activation guards.
-* **Dashboard Control**: Active profile dashboard displaying assigned bookings and active requests.
-* **Direct Profile Editing**: Edit name, mobile, languages, and passwords directly inside the dashboard modal.
-* **SMTP Password Reset**: Secure password recovery with unique activation token reset links sent via SMTP email.
+* **Verified Registrations**: Multi-step registration secured with OTP verification via transactional emails.
+* **Guide Dashboard**: Access assigned bookings, edit profile details, languages, and set custom passwords in a single-page modal experience.
+* **SMTP Recovery**: Secure password reset links sent via SMTP to registered guides using custom activation tokens.
 
-### 3. Admin Control Console (Dashboard)
-* **Real-time Analytics**: Dynamic count cards, revenue summation, and interactive booking charts (Chart.js).
-* **Location & Route Manager**: CRUD panels for States, Cities, and Route station coordinates.
-* **Customer Audit System**: Block/Unblock users, view detailed bookings, and monitor feedback.
-* **Local Guide Verification Panel**: Multi-stage approval interface (Email Verification check -> Admin Review -> Approval email notification -> Rejection mail with deletion).
-
-### 4. Integrated Utilities & Security
-* **Auto-Detect Database Connections**: Smart environment configurations allow the app to run locally on XAMPP and live on InfinityFree without swapping connection strings.
-* **Auto-Password Migration (Bcrypt)**: The admin gateway dynamically verifies standard Bcrypt hashes and older MD5 passwords, automatically upgrading MD5 hashes to Bcrypt on successful login.
-* **SQL Injection Prevention**: Active database queries are fully secured using Prepared Statements and string escaping.
-* **Session Guards**: Centralized session check routing prevents direct URL bypass to admin and guide endpoints.
-* **Directory Listing Blocks**: Custom `.htaccess` rules prevent directory listing and protect database config files from direct URL access.
+### 3. Admin Control Console
+* **Real-time Analytics**: Summary dashboard displaying live traveler counts, active guides, hotel directories, and package bookings with Chart.js visualization.
+* **Location & Route Manager**: CRUD control panels for configuring states, cities, and station nodes.
+* **Auditing System**: Manage customers (block/unblock), inspect booking logs, and verify local guide applications.
 
 ---
 
 ## 🛠️ Technology Stack
 
-* **Backend**: PHP 7+ (OOP and procedural architecture)
-* **Database**: MySQL (relational structure with left-joins)
-* **Frontend**: HTML5, Vanilla CSS3, Javascript, jQuery, Bootstrap 4
-* **Payment Integration**: Razorpay API Integration
-* **APIs & Libraries**: 
-  * [Leaflet JS](https://leafletjs.com/) & [OpenStreetMap](https://www.openstreetmap.org/) (Interactive maps)
-  * [Chart.js](https://www.chartjs.org/) (Data visualizations)
-  * [PHPMailer](https://github.com/PHPMailer/PHPMailer) (SMTP Email notifications)
+* **Backend**: PHP 7.4+ (Structured MVC and procedural elements)
+* **Database**: MySQL (Relational schema with optimized join queries)
+* **Frontend**: HTML5, Vanilla CSS3, Javascript (ES6), jQuery, Bootstrap 4
+* **APIs & Integrations**:
+  * **Razorpay / Instamojo**: Payment gateway checkout integration.
+  * **PHPMailer (SMTP)**: Transactional email notifications (OTPs, activations, resets).
+  * **Leaflet JS & OpenStreetMap**: Interactive mapping and branch locator.
 
 ---
 
-## 💻 Local Installation Guide
+## 📦 Deployment & Setup
 
-### Prerequisites
-* [XAMPP](https://www.apachefriends.org/) (Apache & MySQL server)
-* Git installed locally
+### Database Configuration
+To deploy the platform in a fresh database environment:
+1. Create a MySQL database (e.g., `exploreindia`).
+2. Import the latest relational schema from `database/if0_42189423_exploreindia.sql`.
+3. Configure database credentials in `db.php` corresponding to your production or local connection environment.
 
-### Step-by-Step Setup
-1. Clone this repository into your XAMPP `htdocs` directory:
-   ```bash
-   cd C:\xampp\htdocs
-   git clone https://github.com/YOUR_USERNAME/explore-india-travel.git Explore_India
-   ```
-2. Import the database schema:
-   * Open browser and go to `http://localhost/phpmyadmin/`.
-   * Create a new database named **`exploreindia`**.
-   * Click **Import** and upload the SQL backup file located in `database/if0_42189423_exploreindia.sql`.
-3. Set up database credentials:
-   * Rename `db.php.example` to `db.php`.
-   * Verify your local credentials match the default XAMPP details inside:
-     ```php
-     $servername = "localhost";
-     $username = "root";
-     $password = "";
-     $dbname = "exploreindia";
-     ```
-4. Run the project:
-   * Start Apache and MySQL in the XAMPP Control Panel.
-   * Visit `http://localhost/Explore_India/` in your browser.
-   * Access Admin Panel at `http://localhost/Explore_India/admin/login.php`.
-
----
-
-## 🛡️ License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+### SMTP Mailer Setup
+The system uses PHPMailer for sending transaction-related emails. Ensure global credentials are set in mail-sending utilities (`send_otp.php`, `forgot_password.php`, etc.) using your verified SMTP account details.

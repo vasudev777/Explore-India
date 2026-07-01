@@ -18,7 +18,6 @@ Explore India is a premium, live-deployed travel planning and booking web applic
 * **Special Tour Packages**: Browse curated holiday packages with pre-integrated hotel bookings and pricing.
 * **Unified Transport Console**: Simulated real-time booking interfaces for flights, trains, and cabs (with seat/coach pickers).
 * **Interactive Geo Mapping**: Integration with **Mappls Web SDK (v3.0)** for live branch locating and dynamic mapping markers.
-* **Responsive 5-Image Sliders**: State package pages (`jk.php`, `cd.php`, `ker.php`, `tamil.php`, `guj.php`, `rj.php`, `mp.php`, `sikkim.php`, `wb.php`) use fluid, touch-friendly 5-image CSS animation loops with optimized mobile aspect ratios.
 
 ### 2. Verified Local Guide Console
 * **Guide Registrations**: Multi-step registration secured with OTP verification via transactional emails.

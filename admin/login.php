@@ -11,20 +11,34 @@ if (isset($_SESSION['admin_uname'])) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_btn'])) {
-    $username = trim(mysqli_real_escape_string($conn, $_POST['username']));
-    // User ke password input ko MD5 (32-char hex) hash me convert kiya
-    $password = md5($_POST['password']); 
+    $username = trim($_POST['username']);
+    $plain_password = $_POST['password'];
 
-    if (!empty($username) && !empty($password)) {
-        // Query to check username in admin_login table
-        $sql = "SELECT * FROM admin_login WHERE a_uname='$username'";
-        $res = mysqli_query($conn, $sql);
+    if (!empty($username) && !empty($plain_password)) {
+        // Secure Prepared Statement to query admin by username
+        $stmt = mysqli_prepare($conn, "SELECT * FROM admin_login WHERE a_uname = ?");
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_execute($stmt);
+        $res = mysqli_stmt_get_result($stmt);
 
         if ($res && mysqli_num_rows($res) > 0) {
             $admin = mysqli_fetch_assoc($res);
-            
-            // Compare hex hashes
-            if ($password === $admin['a_password']) {
+            $is_authenticated = false;
+
+            // Check if stored password is BCrypt or MD5
+            if (password_verify($plain_password, $admin['a_password'])) {
+                $is_authenticated = true;
+            } elseif (strlen($admin['a_password']) === 32 && md5($plain_password) === $admin['a_password']) {
+                $is_authenticated = true;
+                
+                // Auto-upgrade MD5 hash to secure Bcrypt hash in DB!
+                $new_hash = password_hash($plain_password, PASSWORD_BCRYPT);
+                $update_stmt = mysqli_prepare($conn, "UPDATE admin_login SET a_password = ? WHERE a_id = ?");
+                mysqli_stmt_bind_param($update_stmt, "si", $new_hash, $admin['a_id']);
+                mysqli_stmt_execute($update_stmt);
+            }
+
+            if ($is_authenticated) {
                 $_SESSION['admin_uname'] = $admin['a_uname'];
                 $_SESSION['admin_id']    = $admin['a_id'];
                 

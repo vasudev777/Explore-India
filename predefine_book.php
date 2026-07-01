@@ -203,7 +203,7 @@ session_start();
     <div class="checkout-card">
 
         <?php
-            $pad = $_POST['pack'];
+            $pad = intval($_POST['pack'] ?? 0);
             $sql = "SELECT * FROM package WHERE pa_id='$pad'";
             $result = mysqli_query($conn, $sql);
             $package = mysqli_fetch_assoc($result);

@@ -154,9 +154,9 @@ session_start();
                 $arr2 = array();
                 $sheet = "";
                 $sh = "";
-                $sdate = $_POST['date'];
-                $cno = $_POST['coach'];
-                $train_id = $_POST['train_id'];
+                $sdate = mysqli_real_escape_string($conn, $_POST['date'] ?? '');
+                $cno = mysqli_real_escape_string($conn, $_POST['coach'] ?? '');
+                $train_id = intval($_POST['train_id'] ?? 0);
                 $sql = "SELECT * from ticket where tic_date='$sdate' and coach_no='$cno' and t_id='$train_id'";
                 $res = mysqli_query($conn, $sql);
                 foreach ($res as $row) {

@@ -71,12 +71,10 @@ session_start();
                         <div class="form-style-w3layout" style="color: ">
                             <!-- <label name="Email" class="mb-3">Email</label> -->
                             <?php
-                            $source = $_POST['source'];
-
-                            $destination = $_POST['destination'];
-                            $sdate = $_POST['date'];
-                            $cno = $_POST['coach'];
-
+                            $source = mysqli_real_escape_string($conn, $_POST['source'] ?? '');
+                            $destination = mysqli_real_escape_string($conn, $_POST['destination'] ?? '');
+                            $sdate = mysqli_real_escape_string($conn, $_POST['date'] ?? '');
+                            $cno = mysqli_real_escape_string($conn, $_POST['coach'] ?? '');
 
                             $sql = "SELECT * FROM trains WHERE via LIKE '%" . $source . "%' and via LIKE '%" . $destination . "%'";
 

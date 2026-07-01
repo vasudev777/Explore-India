@@ -1,4 +1,5 @@
 <?php 
+include('check.php');
 include('db.php');
 
 // DB counts

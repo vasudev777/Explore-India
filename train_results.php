@@ -2,8 +2,8 @@
 include('db.php');
 session_start();
 
-$from_city  = $_POST['from_city']  ?? '';
-$to_city    = $_POST['to_city']    ?? '';
+$from_city  = preg_replace('/[^A-Za-z0-9]/', '', $_POST['from_city'] ?? '');
+$to_city    = preg_replace('/[^A-Za-z0-9]/', '', $_POST['to_city'] ?? '');
 $date       = $_POST['date']       ?? date('Y-m-d');
 $passengers = (int)($_POST['passengers'] ?? 1);
 $class      = $_POST['class']      ?? 'SL';

@@ -2,8 +2,8 @@
 include('db.php');
 session_start();
 
-$from_city_id = $_POST['from_city'] ?? '';
-$to_city_id   = $_POST['to_city']   ?? '';
+$from_city_id = intval($_POST['from_city'] ?? 0);
+$to_city_id   = intval($_POST['to_city']   ?? 0);
 $date         = $_POST['date']       ?? date('Y-m-d');
 $passengers   = (int)($_POST['passengers'] ?? 1);
 $class        = $_POST['class']      ?? 'economy';

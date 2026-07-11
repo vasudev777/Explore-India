@@ -235,6 +235,37 @@ $trans_count   = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FR
                         <input type="date" name="birthdate" value="<?= $row['cust_birthdate'] ?>" class="form-control" style="border-radius:10px;border:1.5px solid #e9ecef;padding:10px 14px;font-size:14px;">
                     </div>
 
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                        <div>
+                            <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:6px;">State</label>
+                            <select name="state" id="stateSelect" onchange="getCities(this.value)" class="form-control" style="border-radius:10px;border:1.5px solid #e9ecef;padding:10px 14px;font-size:14px;height:42px;background:#fff;">
+                                <option value="">Select State</option>
+                                <?php
+                                $states = mysqli_query($conn, "SELECT * FROM state ORDER BY s_name");
+                                foreach ($states as $s) {
+                                    $sel = ($row['cust_state'] == $s['s_id']) ? 'selected' : '';
+                                    echo "<option value='{$s['s_id']}' $sel>{$s['s_name']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:6px;">City</label>
+                            <select name="city" id="citySelect" class="form-control" style="border-radius:10px;border:1.5px solid #e9ecef;padding:10px 14px;font-size:14px;height:42px;background:#fff;">
+                                <option value="">Select City</option>
+                                <?php
+                                if ($row['cust_state'] > 0) {
+                                    $cities = mysqli_query($conn, "SELECT * FROM city WHERE s_id=" . intval($row['cust_state']) . " ORDER BY c_name");
+                                    foreach ($cities as $c) {
+                                        $sel = ($row['cust_city'] == $c['c_id']) ? 'selected' : '';
+                                        echo "<option value='{$c['c_id']}' $sel>{$c['c_name']}</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
                     <div style="margin-bottom:14px;">
                         <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;display:block;margin-bottom:6px;">Address</label>
                         <textarea name="address" rows="2" class="form-control" style="border-radius:10px;border:1.5px solid #e9ecef;padding:10px 14px;font-size:14px;resize:none;"><?= htmlspecialchars($row['cust_address']) ?></textarea>
@@ -267,5 +298,21 @@ $trans_count   = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FR
 </div>
 
 <?php include('footer.php'); ?>
+<script>
+function getCities(stateId) {
+    if (!stateId) {
+        $('#citySelect').html('<option value="">Select City</option>');
+        return;
+    }
+    $.ajax({
+        type: 'POST',
+        url:  'city.php',
+        data: 's_id=' + stateId,
+        success: function(html) {
+            $('#citySelect').html(html);
+        }
+    });
+}
+</script>
 </body>
 </html>

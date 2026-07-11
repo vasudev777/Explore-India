@@ -463,41 +463,73 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 function signInWithGoogle() {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    document.getElementById('spinnerOverlay').classList.add('show');
+    if (window.AndroidInterface) {
+        // Use native Android Google Sign-In
+        window.AndroidInterface.launchGoogleSignIn();
+    } else {
+        // Fallback for laptop browser: use Firebase popup
+        var provider = new firebase.auth.GoogleAuthProvider();
+        document.getElementById('spinnerOverlay').classList.add('show');
 
-    firebase.auth().signInWithPopup(provider)
-        .then(function(result) {
-            var user  = result.user;
-            var email = user.email;
-            var name  = user.displayName || '';
-            var parts = name.split(' ');
-            var fname = parts[0] || '';
-            var lname = parts.slice(1).join(' ') || '';
+        firebase.auth().signInWithPopup(provider)
+            .then(function(result) {
+                var user  = result.user;
+                var email = user.email;
+                var name  = user.displayName || '';
+                var parts = name.split(' ');
+                var fname = parts[0] || '';
+                var lname = parts.slice(1).join(' ') || '';
 
-            // Send to PHP handler
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'google_auth.php';
-            [
-                { name: 'email', value: email },
-                { name: 'fname', value: fname },
-                { name: 'lname', value: lname },
-                { name: 'uid',   value: user.uid }
-            ].forEach(function(field) {
-                var inp = document.createElement('input');
-                inp.type  = 'hidden';
-                inp.name  = field.name;
-                inp.value = field.value;
-                form.appendChild(inp);
+                // Send to PHP handler
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'google_auth.php';
+                [
+                    { name: 'email', value: email },
+                    { name: 'fname', value: fname },
+                    { name: 'lname', value: lname },
+                    { name: 'uid',   value: user.uid }
+                ].forEach(function(field) {
+                    var inp = document.createElement('input');
+                    inp.type  = 'hidden';
+                    inp.name  = field.name;
+                    inp.value = field.value;
+                    form.appendChild(inp);
+                });
+                document.body.appendChild(form);
+                form.submit();
+            })
+            .catch(function(err) {
+                document.getElementById('spinnerOverlay').classList.remove('show');
+                alert('Google Sign-in failed: ' + err.message);
             });
-            document.body.appendChild(form);
-            form.submit();
-        })
-        .catch(function(err) {
-            document.getElementById('spinnerOverlay').classList.remove('show');
-            alert('Google Sign-in failed: ' + err.message);
-        });
+    }
+}
+
+// This function is called by the Android App natively after user picks their Google account
+function handleGoogleUserNative(email, displayName, uid) {
+    var parts = displayName.split(' ');
+    var fname = parts[0] || '';
+    var lname = parts.slice(1).join(' ') || '';
+
+    // Send to PHP handler
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'google_auth.php';
+    [
+        { name: 'email', value: email },
+        { name: 'fname', value: fname },
+        { name: 'lname', value: lname },
+        { name: 'uid',   value: uid }
+    ].forEach(function(field) {
+        var inp = document.createElement('input');
+        inp.type  = 'hidden';
+        inp.name  = field.name;
+        inp.value = field.value;
+        form.appendChild(inp);
+    });
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 </body>

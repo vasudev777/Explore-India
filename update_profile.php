@@ -8,6 +8,8 @@ $fname    = mysqli_real_escape_string($conn, trim($_POST['fname']    ?? ''));
 $lname    = mysqli_real_escape_string($conn, trim($_POST['lname']    ?? ''));
 $mobile   = mysqli_real_escape_string($conn, trim($_POST['mobile']   ?? ''));
 $gender   = mysqli_real_escape_string($conn, trim($_POST['gender']   ?? ''));
+$state    = intval($_POST['state'] ?? 0);
+$city     = intval($_POST['city'] ?? 0);
 $address  = mysqli_real_escape_string($conn, trim($_POST['address']  ?? ''));
 $birthdate= mysqli_real_escape_string($conn, trim($_POST['birthdate'] ?? ''));
 $new_pass = trim($_POST['new_password'] ?? '');
@@ -17,6 +19,8 @@ $sql = "UPDATE customer_details SET
     cust_lname    = '$lname',
     cust_mobile   = '$mobile',
     cust_gender   = '$gender',
+    cust_state    = '$state',
+    cust_city     = '$city',
     cust_address  = '$address',
     cust_birthdate= '$birthdate'";
 

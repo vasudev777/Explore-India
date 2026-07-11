@@ -2,8 +2,15 @@
 include('db.php');
 include('check.php');
 
-$msg = '';
-$msg_type = '';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load and clear flash messages from session
+$msg = $_SESSION['msg'] ?? '';
+$msg_type = $_SESSION['msg_type'] ?? '';
+unset($_SESSION['msg']);
+unset($_SESSION['msg_type']);
 
 // ===== TOGGLE BLOCK STATUS =====
 if (isset($_GET['toggle_block'])) {
@@ -12,8 +19,15 @@ if (isset($_GET['toggle_block'])) {
     if ($row = mysqli_fetch_assoc($res)) {
         $new_status = ($row['is_blocked'] == 1) ? 0 : 1;
         mysqli_query($conn, "UPDATE customer_details SET is_blocked='$new_status' WHERE cust_id='$id'");
-        $msg = "Customer block status updated successfully!";
-        $msg_type = "success";
+        
+        $_SESSION['msg'] = "Customer block status updated successfully!";
+        $_SESSION['msg_type'] = "success";
+        
+        // Redirect to a clean URL preserving active filters/search
+        $filter = $_GET['filter'] ?? 'all';
+        $search = $_GET['search'] ?? '';
+        header("Location: customer_manage.php?filter=$filter&search=" . urlencode($search));
+        exit;
     }
 }
 
@@ -21,12 +35,18 @@ if (isset($_GET['toggle_block'])) {
 if (isset($_GET['delete'])) {
     $id = intval($_GET['delete']);
     if (mysqli_query($conn, "DELETE FROM customer_details WHERE cust_id='$id'")) {
-        $msg = "Customer profile deleted permanently!";
-        $msg_type = "success";
+        $_SESSION['msg'] = "Customer profile deleted permanently!";
+        $_SESSION['msg_type'] = "success";
     } else {
-        $msg = "Error deleting customer profile.";
-        $msg_type = "error";
+        $_SESSION['msg'] = "Error deleting customer profile.";
+        $_SESSION['msg_type'] = "error";
     }
+    
+    // Redirect to a clean URL preserving active filters/search
+    $filter = $_GET['filter'] ?? 'all';
+    $search = $_GET['search'] ?? '';
+    header("Location: customer_manage.php?filter=$filter&search=" . urlencode($search));
+    exit;
 }
 
 // ===== FILTERS & SEARCH =====

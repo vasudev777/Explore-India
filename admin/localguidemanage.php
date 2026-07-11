@@ -2,6 +2,16 @@
 include('db.php');
 include('check.php');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load and clear flash messages from session
+$msg = $_SESSION['msg'] ?? '';
+$msg_type = $_SESSION['msg_type'] ?? '';
+unset($_SESSION['msg']);
+unset($_SESSION['msg_type']);
+
 // Import PHPMailer classes into the global namespace
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -109,8 +119,11 @@ if (isset($_GET['approve'])) {
         mysqli_query($conn, "UPDATE local_guide SET localg_approve='1' WHERE localg_id='$id'");
         sendApprovalEmail($email, $name);
         
-        $msg = "Local guide application approved and confirmation email sent!";
-        $msg_type = "success";
+        $_SESSION['msg'] = "Local guide application approved and confirmation email sent!";
+        $_SESSION['msg_type'] = "success";
+        
+        header("Location: localguidemanage.php");
+        exit;
     }
 }
 
@@ -127,8 +140,11 @@ if (isset($_POST['reject_guide'])) {
         sendRejectionEmail($email, $name, $reason);
         mysqli_query($conn, "DELETE FROM local_guide WHERE localg_id='$id'");
         
-        $msg = "Guide application rejected, notification email sent, and record deleted.";
-        $msg_type = "success";
+        $_SESSION['msg'] = "Guide application rejected, notification email sent, and record deleted.";
+        $_SESSION['msg_type'] = "success";
+        
+        header("Location: localguidemanage.php");
+        exit;
     }
 }
 
@@ -140,8 +156,12 @@ if (isset($_GET['toggle_block'])) {
         if ($row['localg_approve'] == 1) {
             $new_status = ($row['status'] == 1) ? 0 : 1;
             mysqli_query($conn, "UPDATE local_guide SET status='$new_status' WHERE localg_id='$id'");
-            $msg = "Local guide block status updated successfully!";
-            $msg_type = "success";
+            
+            $_SESSION['msg'] = "Local guide block status updated successfully!";
+            $_SESSION['msg_type'] = "success";
+            
+            header("Location: localguidemanage.php");
+            exit;
         }
     }
 }
